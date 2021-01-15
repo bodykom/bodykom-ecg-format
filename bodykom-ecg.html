@@ -1,0 +1,424 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Bodykom File Format</title>
+    <meta name="viewport" content="width=device-width, user-scalable=yes">
+    <meta charset="utf-8">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <style type="text/css">
+        @page { margin: 2cm; }
+        body { color: black; background: white; font-family: sans-serif;
+          margin: 4em; max-width: 70ex; line-height: 1.4; }
+        table, tr, td { border: 0.5px solid black; border-collapse: collapse;
+          border-spacing: 0;}
+        thead tr td { font-weight: bold;}
+        td { padding: 0.2ex;}
+        td { text-align: left; }
+    </style>
+</head>
+<body lang="en">
+  <h1>Bodykom ECG Data file format</h1>
+  <p>
+    <em>Richard W, HP, September 2007</em><br>
+    <em>Fredrik J, Wip, January 2018</em>
+  </p>
+
+<p>This is an overview of the ECG data file format of ECG session files
+exported from Bodykom. The file format is compatible with <em>SR
+Medizinelektronik Cardio Explorer</em> ECG analysis software</p>
+
+<h2>2. File format requirements</h2>
+
+<p>The data from an ECG session is exported as a zip file.</p>
+
+<p>The zip file contains three mandatory files and one optional file that as a
+whole represent the data from a single ECG session. The files are contained in
+a subdirectory in the zip file. The name of the directory and files are based on
+the id of the sensor and the date time of the start of the session. The content
+of the files are identified by their respective file suffix, <code>t0</code>,
+<code>0</code>, <code>1</code>, and <code>2</code>.</p>
+
+<ul>
+  <li><code>.t0</code> - Event Marker list, <em>optional</em>. Contains
+    block sequence number of all user initatied event markers. When no user
+    events have been created during a ECG recording session this file is
+    omitted.</li>
+  <li><code>.0</code> - Header data, 512 bytes block</li>
+  <li><code>.1</code> - the ECG data representing Channel 1, prefixed by a 512 byte header data block.</li>
+  <li><code>.2</code> - the ECG data representing Channel 2, prefixed by a 512 byte header data block.</li>
+</ul>
+
+<p>The header data block in the .0 file is repeated at the start of both the ECG
+data files 1 and 2.</p>
+
+<p> The files <code>.0</code>, <code>.1</code>, and <code>.2</code> are
+required in order to display and analyse the ECG data with the Cardio Explorer
+software. The <code>.t0</code> file is optional.</p>
+
+<h2>3. Header file</h2>
+<h3>3.1. Header format</h3>
+
+<p>The header file contains a fixed size 512 byte block with fields defined
+per the following table.</p>
+
+<p><em>Note!</em> Bodykom applies default values for most of the fields
+with the notable exception of the registration date fields.</p>
+
+<table>
+    <thead>
+        <tr>
+            <td>Position </td>
+            <td>Type </td>
+            <td>Parameter </td>
+            <td>Example </td>
+            <td>Length </td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>0-5 </td>
+            <td>char </td>
+            <td>File tag </td>
+            <td>"CS0" </td>
+            <td>4 </td>
+        </tr>
+        <tr>
+            <td>6-10 </td>
+            <td>char </td>
+            <td>File version </td>
+            <td>"0" </td>
+            <td>4 </td>
+        </tr>
+        <tr>
+            <td>11-51 </td>
+            <td>char </td>
+            <td>Patient surname </td>
+            <td>Stargazer </td>
+            <td>40 </td>
+        </tr>
+        <tr>
+            <td>52-92 </td>
+            <td>char </td>
+            <td>Patient first name </td>
+            <td>Michelle </td>
+            <td>40 </td>
+        </tr>
+        <tr>
+            <td>93-94 </td>
+            <td>char </td>
+            <td>Sex </td>
+            <td>"0" = unknown<br> "1" = women<br> "2" = men </td>
+            <td>1 </td>
+        </tr>
+        <tr>
+            <td>95-99 </td>
+            <td>char </td>
+            <td>Date of Birth (year) </td>
+            <td>"1954" </td>
+            <td>4 </td>
+        </tr>
+        <tr>
+            <td>100-102 </td>
+            <td>char </td>
+            <td>month </td>
+            <td>"1" - "12" </td>
+            <td>2 </td>
+        </tr>
+        <tr>
+            <td>103-105 </td>
+            <td>char </td>
+            <td>day </td>
+            <td>"1" - "31" </td>
+            <td>2 </td>
+        </tr>
+        <tr>
+            <td>106-120 </td>
+            <td>char </td>
+            <td>Patient ID number </td>
+            <td>"00243a" </td>
+            <td>14 </td>
+        </tr>
+        <tr>
+            <td>121-125 </td>
+            <td>char </td>
+            <td>Registration date of file (year) </td>
+            <td>"2001" </td>
+            <td>4 </td>
+        </tr>
+        <tr>
+            <td>126-128 </td>
+            <td>char </td>
+            <td>month </td>
+            <td>"1" - "12" </td>
+            <td>2 </td>
+        </tr>
+        <tr>
+            <td>129-131 </td>
+            <td>char </td>
+            <td>day </td>
+            <td>"1" - "31" </td>
+            <td>2 </td>
+        </tr>
+        <tr>
+            <td>132-134 </td>
+            <td>char </td>
+            <td>hour </td>
+            <td>"0" - "23" </td>
+            <td>2 </td>
+        </tr>
+        <tr>
+            <td>135-137 </td>
+            <td>char </td>
+            <td>minute </td>
+            <td>"0" - "59" </td>
+            <td>2 </td>
+        </tr>
+        <tr>
+            <td>138-140 </td>
+            <td>char </td>
+            <td>second </td>
+            <td>"0" - "59" </td>
+            <td>2 </td>
+        </tr>
+        <tr>
+            <td>141-144 </td>
+            <td>char </td>
+            <td>height (cm) </td>
+            <td>"183" </td>
+            <td>3 </td>
+        </tr>
+        <tr>
+            <td>145-148 </td>
+            <td>char </td>
+            <td>weight (kg) </td>
+            <td>"84" </td>
+            <td>3 </td>
+        </tr>
+        <tr>
+            <td>149-150 </td>
+            <td>char </td>
+            <td>Pacemaker </td>
+            <td>"0" = unknown<br> "1" = demand<br> "2" = atrial </td>
+            <td>1 </td>
+        </tr>
+        <tr>
+            <td>151-152 </td>
+            <td>char </td>
+            <td>Analysis state </td>
+          <td>"0" = not analysed<br> "1" = results exists<br> "2" = results were edited </td>
+            <td>1 </td>
+        </tr>
+        <tr>
+            <td>153-154 </td>
+            <td>char </td>
+            <td>ECG data transmitted (to PC) </td>
+            <td>"0" = No <br> "1" = Yes </td>
+            <td>1            </td>
+        </tr>
+        <tr>
+            <td>155-164 </td>
+            <td>char </td>
+            <td>Number of samples in 1. channel </td>
+            <td>"432345677" </td>
+            <td>9 </td>
+        </tr>
+        <tr>
+            <td>165-170 </td>
+            <td>char </td>
+            <td>Frequency of sampling </td>
+            <td>"150" </td>
+            <td>5 </td>
+        </tr>
+        <tr>
+            <td>171-172 </td>
+            <td>char </td>
+            <td>Filter </td>
+            <td>"0" = unused<br> "1" = 100 Hz HF<br>
+              "2" = 50 Hz HF<br> "4" = 50 Hz Reg.<br>
+                8 = isol </td>
+            <td>1 </td>
+        </tr>
+        <tr>
+            <td>173-175 </td>
+            <td>char </td>
+            <td>Number of channels </td>
+            <td>"4" </td>
+            <td>2 </td>
+        </tr>
+        <tr>
+            <td>176-178 </td>
+            <td>char </td>
+            <td>A/D Converter (bits) </td>
+            <td>"12" </td>
+            <td>2 </td>
+        </tr>
+        <tr>
+            <td>179-180 </td>
+            <td>char </td>
+            <td>Record type </td>
+            <td>"0" = Holter<br> "1" = "Rest<br> "2" = Exercise </td>
+            <td>1 </td>
+        </tr>
+        <tr>
+            <td>181-511 </td>
+            <td>char </td>
+            <td>Reserved, zero-filled. </td>
+            <td>0x00 </td>
+            <td>330 </td>
+        </tr>
+    </tbody>
+</table>
+<p class="western">
+<h3>3.2 Remarks</h3>
+
+<p>Gaps between code groups, one byte, are filled with 0x00.</p>
+
+<p>All char fields are ANSI strings, padded by zero (0x00). Each field
+contains at least one 0x00 byte.</p>
+
+<p> Fields, representing numeric values (height, weight, ...), are left
+justified.</p>
+
+<p>Currently the ECG file format version "001" is the only supported ECG data
+format supported by Bodykom.</p>
+
+<p>The following default values are used by the Bodykom solution.</p>
+
+        <table>
+            <tr>
+                <td>Field </td>
+                <td>Value </td>
+            </tr>
+            <tr>
+                <td>File Tag </td>
+                <td>"CSZB"</td>
+            </tr>
+            <tr>
+                <td>File Version</td>
+                <td>"001" </td>
+            </tr>
+            <tr>
+                <td>Sex </td>
+                <td>"0" </td>
+            </tr>
+            <tr>
+                <td>Pacemaker </td>
+                <td>"0" </td>
+            </tr>
+            <tr>
+                <td>Analysis State </td>
+                <td>"0" </td>
+            </tr>
+            <tr>
+                <td>Rec Status (ECG data transmitted) </td>
+                <td>"1" </td>
+            </tr>
+            <tr>
+                <td>Frequency </td>
+                <td>"150" </td>
+            </tr>
+            <tr>
+                <td>Filter</td>
+                <td>"0" </td>
+            </tr>
+            <tr>
+                <td>Number of Channels </td>
+                <td>"2" </td>
+            </tr>
+            <tr>
+              <td>A/D Converter (bits) </td>
+                <td>"16" </td>
+            </tr>
+            <tr>
+                <td>Record Type</td>
+                <td>"0" </td>
+            </tr>
+        </table>
+
+<p> The birthdate details are left blank, as are the height and weight details.
+The Patient Id is set to the communicator ID of the Bodykom Client Device
+and so is the Patient surname field. The Patient firstname field is currently
+left blank by the Bodykom app.</p>
+
+<p> The Registration date and time is set as the start timestamp of the
+ECG recording session.</p>
+
+<h2>4. ECG data files</h2>
+<h3>4.1. Body format</h3>
+
+<p>The first 512 bytes of data in both channel date files contains a copy of
+the header file <code>.0</code>. The ECG data within the data channel files,
+<code>1</code> and <code>2</code> is defined as little endian 16-bit values.
+The zero-point is set at 16000, and each 1mV gain corresponds to 3200.</p>
+
+<h3>4.1. ECG data transformation</h3>
+
+<p>The Transformation algorithm works on a channel by channel basis, and
+processes each segment of ECG data in following steps.</p>
+
+<ul>
+  <li> 1. A segment of of hub formatted data containing a contigous group of
+  sample blocks - where each block contains 255 samples per channel - which is
+  processed on a block-by-block basis by retrieving the relevant channel data
+  from each block and then creating a continuous array of single channel
+  data.</li>
+
+  <li> 2. This single channel array is converted to little-endian array of shorts
+    two bytes at a time. This is described by the following short code snippet.<br>
+
+<pre><code>
+  private static short readShortLittleEndian(byte b1, byte b2) {
+    int low = b1 &amp; 0xff;
+    int high = b2 &amp; 0xff;
+    return(short)( high &lt;&lt; 8 | low );
+  }
+</code></pre>
+<p>This conversion essentially just reverses the position of the two bytes and
+  returns them as a short - for example 3E D9 would become D9 3E.</p>
+  </li>
+
+<li>The converted data for each channel is written to the relevant channel
+  file, i.e 1 or 2 so that the channel samples for a specific timestamp
+  correlates to the same file position in each channel data file.</li>
+</ul>
+
+<h2>5. The event marker file</h2>
+
+<p>A person who wears a Bodykom sensor, can record user initiated
+events by tapping the ECG sensor so that the built in accelerometer detects
+a vibration. Each such event is recorded as a part of the current block. User
+events are identified by the Bodykom app and the current block sequence number
+and current time is recorded as event markers, and the markers are transmitted
+to the server.</p>
+
+<p>A ECG session may or may not contain any event markers. If a session
+contains at least one event marker a <code>t0</code>-file is added to the zip
+file. When no event markers are present during a session, no event marker
+file is generated.</p>
+
+<p>The t0 file contains a series of event markers, where each marker is
+represented by four bytes. The first byte of each marker record always contains
+0x00, followed by a tree byte little endian integer that identifies the block
+sequence number - offset relative to the first block of the session - where the
+marker occurred.</p>
+
+<h3>5.1. Event marker file example</h3>
+
+Each marker is represented by four bytes. First always 0x00, then the
+block sequence number in little endian format, low byte, middle byte, high
+byte. Each sample block contains 255 samples and is 1707 ms long.  So to
+compute the block sequence number of a event marker recorded at a certain
+time, subtract the event marker time with the start time, divided by 1707
+ms. See the following examples.</p>
+
+<pre><code>
+Marker 1 = 00 0A 00 00 = 0Ah  = 10d   * 1,707s = 17s
+Marker 2 = 00 14 00 00 = 14h  = 20d   * 1,707s = 34s
+Marker 2 = 00 26 00 00 = 26h  = 38d   * 1,707s = 65s = 1'5"
+Marker 3 = 00 62 01 00 = 162h = 354d  * 1,707s = 604s = 10'4"
+Marker 4 = 00 09 04 00 = 409h = 1033d * 1,707s = 1763s = 29'23"
+Marker 5 = 00 D6 05 00 = 5D6h = 1494d * 1,707s = 2550s = 42'30"
+</code></pre>
+
+</body>
+</html>
